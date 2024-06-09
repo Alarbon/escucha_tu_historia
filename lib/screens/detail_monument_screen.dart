@@ -108,7 +108,9 @@ class AudioWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final audioProvider = Provider.of<AudioProvider>(context);
     final monumentsProvider = Provider.of<MonumentsProvider>(context);
-    audioProvider.setUrl(monumentsProvider.selectedMonument!.audioUrl!);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      audioProvider.setUrl(monumentsProvider.selectedMonument!.audioUrl!);
+    });
     return Container(
       width: size.width,
       height: size.height * 0.14,
@@ -135,11 +137,11 @@ class AudioWidget extends StatelessWidget {
                         monumentsProvider.selectedMonument!.number!)
                     ? null
                     : () {
-                        audioProvider.pause();
+                        audioProvider.pause(true);
                         monumentsProvider.getPreviousMonument(
                             monumentsProvider.selectedMonument!.number!);
 
-                        context.push('/monumentDetail');
+                        context.replace('/monumentDetail');
                       },
               ),
               AudioControlPlayWidget(audioProvider: audioProvider),
@@ -150,10 +152,10 @@ class AudioWidget extends StatelessWidget {
                         monumentsProvider.selectedMonument!.number!)
                     ? null
                     : () {
-                        audioProvider.pause();
+                        audioProvider.pause(true);
                         monumentsProvider.getNextMonument(
                             monumentsProvider.selectedMonument!.number!);
-                        context.push('/monumentDetail');
+                        context.replace('/monumentDetail');
                       },
               ),
             ],
@@ -244,7 +246,7 @@ class AudioControlPlayWidget extends StatelessWidget {
           ),
           onPressed: () {
             if (audioProvider.isPlaying) {
-              audioProvider.pause();
+              audioProvider.pause(false);
             } else {
               audioProvider.play();
             }
@@ -467,7 +469,7 @@ class ImageTitleWidget extends StatelessWidget {
             child: InkWell(
               borderRadius: BorderRadius.circular(100),
               onTap: () {
-                audioProvider.pause();
+                audioProvider.pause(true);
                 settingProvider.isHomeScreen
                     ? context.go('/home')
                     : context.go('/routes');

@@ -6,13 +6,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Preferences {
   static late SharedPreferences _preferences;
   static bool _darkMode = false;
-  static bool _firstTime = true;
   static String _language = 'es';
 
   static Future init() async {
     _preferences = await SharedPreferences.getInstance();
   }
-
   // Modo oscuro
   static bool get darkMode {
     return _preferences.getBool('darkMode') ?? false;
@@ -21,16 +19,6 @@ class Preferences {
   static set darkMode(bool value) {
     _darkMode = value;
     _preferences.setBool('darkMode', _darkMode);
-  }
-
-  // Primera vez que se abre la app
-  static bool get firstTime {
-    return _preferences.getBool('firstTime') ?? true;
-  }
-
-  static set firstTime(bool value) {
-    _firstTime = value;
-    _preferences.setBool('firstTime', _firstTime);
   }
 
   // Idioma

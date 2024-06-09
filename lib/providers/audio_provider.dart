@@ -21,8 +21,10 @@ class AudioProvider extends ChangeNotifier {
 
   get totalDuration => _totalDuration;
 
-  bool _isResetting =
-      false; // Variable para prevenir bucles infinitos de reinicios
+  set currentPositions(Duration value) {
+    _currentPosition = value;
+    notifyListeners();
+  }
 
   AudioProvider() {
     /// Compulsory
@@ -47,13 +49,6 @@ class AudioProvider extends ChangeNotifier {
     player.onPositionChanged.listen((duration) {
       _currentPosition = duration;
       notifyListeners();
-    });
-
-    player.onPlayerComplete.listen((event) {
-      if (_isPlaying && !_isResetting) {
-        _isResetting = true;
-        _handleReset();
-      }
     });
   }
 
@@ -80,9 +75,12 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> pause() async {
+  Future<void> pause(bool isRestartCurrentPosition) async {
     await player.pause();
     _isPlaying = false;
+    if (isRestartCurrentPosition) {
+      _currentPosition = Duration.zero;
+    }
     notifyListeners();
   }
 
@@ -98,6 +96,14 @@ class AudioProvider extends ChangeNotifier {
     toastMessage(S.current.add_time_audio);
     notifyListeners();
   }
+
+  // void stop() async {
+  //   await player.stop();
+  //   _currentPosition = Duration.zero;
+  //   _totalDuration = const Duration(seconds: 89);
+  //   _isPlaying = false;
+  //   notifyListeners();
+  // }
 
   void substractTime() {
     Duration newPos = Duration(seconds: (_currentPosition.inSeconds - 5));
@@ -116,16 +122,5 @@ class AudioProvider extends ChangeNotifier {
       backgroundColor: Colors.black.withOpacity(0.5),
       textColor: Colors.white,
     );
-  }
-
-  void _handleReset() async {
-    if (_url != null) {
-      await player.stop();
-      Source source = UrlSource(_url!);
-      await player.setSource(source);
-      await player.seek(_currentPosition);
-      await player.play(source);
-      _isResetting = false;
-    }
   }
 }
