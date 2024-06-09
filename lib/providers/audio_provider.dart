@@ -97,14 +97,6 @@ class AudioProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // void stop() async {
-  //   await player.stop();
-  //   _currentPosition = Duration.zero;
-  //   _totalDuration = const Duration(seconds: 89);
-  //   _isPlaying = false;
-  //   notifyListeners();
-  // }
-
   void substractTime() {
     Duration newPos = Duration(seconds: (_currentPosition.inSeconds - 5));
     player.seek(newPos); // Jumps to the given position within the audio file

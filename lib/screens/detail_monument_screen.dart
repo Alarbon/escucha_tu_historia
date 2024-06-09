@@ -472,7 +472,7 @@ class ImageTitleWidget extends StatelessWidget {
                 audioProvider.pause(true);
                 settingProvider.isHomeScreen
                     ? context.go('/home')
-                    : context.go('/routes');
+                    : context.pop();
               },
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
